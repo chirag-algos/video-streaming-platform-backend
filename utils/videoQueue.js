@@ -6,10 +6,16 @@ import fs from 'fs';
 import path from "path";
 import { processVideoSummaryJob } from "./summary.js";
 
-const connection = new IORedis({
-    host: "127.0.0.1",
-    port: 6379,
+const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+const connection = new IORedis(redisUrl,{
     maxRetriesPerRequest: null,
+});
+connection.on("connect", () => {
+    console.log("✅ Redis connected");
+});
+
+connection.on("error", (err) => {
+    console.error("❌ Redis error:", err);
 });
 
 export const videoQueue = new Queue("video-processing", { connection });
