@@ -31,7 +31,15 @@ import aiRouter from './routes/aiRoutes.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import { exec } from "child_process";
+exec("ffmpeg -version", (err, stdout, stderr) => {
+    if (err) {
+        console.error("❌ FFmpeg not working:", err);
+        return;
+    }
+    console.log("✅ FFmpeg working:");
+    console.log(stdout);
+});
 // ES Modules path handling
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
