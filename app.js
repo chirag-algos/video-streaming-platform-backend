@@ -48,7 +48,7 @@ const __dirname = path.dirname(__filename);
 
 // CORS Configuration
 const corsOptions = {
-    origin: (process.env.corsOrigin || 'http://localhost:3000').split(',').map(url => url.trim()),
+    origin: (process.env.corsOrigin || 'http://localhost:5173').split(',').map(url => url.trim()),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
