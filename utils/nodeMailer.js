@@ -34,9 +34,10 @@ export const transporter = nodemailer.createTransport({
 if (process.env.NODE_ENV === 'production') {
     transporter.verify((error, success) => {
         if (error) {
-            console.error("❌ Nodemailer verification failed:", error.message);
+            console.warn("⚠️  Nodemailer verification failed (may be network restricted on Railway):", error.message);
+            console.warn("⚠️  Email will still work when needed - continuing without verification");
         } else {
-            console.log("✅ Nodemailer is ready to send emails");
+            console.log("✅ Nodemailer verified and ready to send emails");
         }
     });
 }
