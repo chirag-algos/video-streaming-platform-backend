@@ -6,16 +6,21 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const BASE_PATH = "C:\\Users\\DEEPAK\\Downloads\\ffmpeg-2026-04-06-git-7fd2be97b9-full_build\\ffmpeg-2026-04-06-git-7fd2be97b9-full_build\\bin";
-const FFMPEG_PATH = path.join(BASE_PATH, "ffmpeg.exe");
-const FFPROBE_PATH = path.join(BASE_PATH, "ffprobe.exe");
+if (process.env.NODE_ENV !== "production") {
+    const BASE_PATH = "C:\\Users\\DEEPAK\\Downloads\\ffmpeg-2026-04-06-git-7fd2be97b9-full_build\\ffmpeg-2026-04-06-git-7fd2be97b9-full_build\\bin";
+    
+    ffmpeg.setFfmpegPath(path.join(BASE_PATH, "ffmpeg.exe"));
+    ffmpeg.setFfprobePath(path.join(BASE_PATH, "ffprobe.exe"));
 
-ffmpeg.setFfmpegPath(FFMPEG_PATH);
-ffmpeg.setFfprobePath(FFPROBE_PATH);
+    console.log("✅ Using local FFmpeg path");
+} else {
+    // 🚀 On Railway (Linux), use system-installed FFmpeg
+    console.log("🚀 Using system FFmpeg (Railway)");
+}
 
 cloudinary.config({ 
     cloud_name: process.env.cloudinaryName, 
-    api_key: process.env.cloudinarykey, 
+    api_key: process.env.cloudinaryKey, 
     api_secret: process.env.cloudinarySecret 
 });
 
