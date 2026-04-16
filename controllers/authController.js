@@ -1,7 +1,7 @@
 import { User } from "../models/userModel.js";
 import { video as Video } from "../models/videoModel.js";
 import jwt from "jsonwebtoken";
-import { transporter } from "../utils/nodeMailer.js";
+import { sendValdoraEmail } from "../utils/email.js";
 import validator from "validator";
 import mongoose from "mongoose";
 import { cookieOptions } from "../config/security.js";
@@ -46,21 +46,9 @@ export const registerUser = async (req, res) => {
             isVerified: false
         });
 
-        await transporter.sendMail({
-            from: `"Valdora Team" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: "Verify your Valdora Account",
-            html: `
-                <div style="font-family: sans-serif; text-align: center; background: #0f0f0f; color: white; padding: 20px; border-radius: 10px;">
-                    <h2 style="color: #e11d48;">Welcome to Valdora</h2>
-                    <p>Use the code below to verify your email:</p>
-                    <div style="background: #1a1a1a; padding: 20px; border: 1px solid #e11d48; display: inline-block; border-radius: 8px;">
-                        <h1 style="letter-spacing: 10px; font-size: 40px; margin: 0; color: #e11d48;">${otp}</h1>
-                    </div>
-                    <p style="margin-top: 20px; opacity: 0.7;">This code expires in 10 minutes.</p>
-                </div>
-            `
-        });
+        // Background Email Trigger (Non-blocking)
+        sendValdoraEmail(email, otp, "Verify your Valdora Account")
+            .catch(err => console.error("Registration Email Failed:", err));
 
         res.status(201).json({ success: true, message: "OTP sent to email!" });
     } catch (error) {
@@ -160,21 +148,9 @@ export const forgotPassword = async (req, res) => {
         user.otpExpiry = otpExpiry;
         await user.save();
 
-        await transporter.sendMail({
-            from: `"Valdora Support" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Your Password Reset OTP',
-            html: `
-                <div style="font-family: sans-serif; text-align: center; background: #0f0f0f; color: white; padding: 20px; border-radius: 10px;">
-                    <h2 style="color: #e11d48;">Reset Your Password</h2>
-                    <p>Use the code below to reset your Valdora password:</p>
-                    <div style="background: #1a1a1a; padding: 20px; border: 1px solid #e11d48; display: inline-block; border-radius: 8px;">
-                        <h1 style="letter-spacing: 10px; font-size: 40px; margin: 0; color: #e11d48;">${otp}</h1>
-                    </div>
-                    <p style="margin-top: 20px; opacity: 0.7;">This code expires in 10 minutes.</p>
-                </div>
-            `
-        });
+        // Background Email Trigger (Non-blocking)
+        sendValdoraEmail(email, otp, "Your Password Reset OTP")
+            .catch(err => console.error("Reset Email Failed:", err));
 
         res.status(200).json({ success: true, message: 'OTP sent to your email!' });
     } catch (error) {
